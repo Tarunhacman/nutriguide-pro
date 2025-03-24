@@ -1,11 +1,10 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+import google.generativeai as genai
 from langchain.callbacks import StreamlitCallbackHandler
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains import LLMChain
-import google.generativeai as genai
 
 # Set page config first, before any other Streamlit commands
 st.set_page_config(
@@ -19,8 +18,9 @@ st.set_page_config(
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# Configure Google Generative AI
+# Configure the Gemini model
 genai.configure(api_key=GOOGLE_API_KEY)
+model = genai.GenerativeModel('gemini-pro')
 
 # Custom CSS for modern UI
 st.markdown("""
@@ -142,62 +142,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_llm():
-    return ChatGoogleGenerativeAI(
-        model="gemini-1.5-pro-latest",
-        google_api_key=GOOGLE_API_KEY,
-        temperature=0.7,
-        max_output_tokens=1000,
-        verbose=True,
-        convert_system_message_to_human=True,
-        callbacks=[StreamlitCallbackHandler(st.container())]
-    )
+    """Get the LLM instance with Streamlit callback handler."""
+    chat = model.start_chat(history=[])
+    return chat
 
 def create_nutrition_plan(user_info):
-    """Create a personalized nutrition plan using the Gemini model."""
-    llm = get_llm()
+    """Create a personalized nutrition plan based on user information."""
+    chat = get_llm()
     
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are a comprehensive nutrition advisor with expertise in creating personalized nutrition plans.
-        Consider all aspects of the user's profile including demographics, health conditions, and preferences.
-        Provide detailed, practical, and scientifically-backed recommendations."""),
-        ("human", """Create a personalized nutrition plan for the following user:
-        
-        Demographics:
-        - Age: {age}
-        - Gender: {gender}
-        - Height: {height}
-        - Weight: {weight}
-        - Activity Level: {activity_level}
-        - Goals: {goals}
-        
-        Health Information:
-        - Medical Conditions: {medical_conditions}
-        - Medications: {medications}
-        - Allergies/Intolerances: {allergies}
-        
-        Preferences & Lifestyle:
-        - Food Preferences: {food_preferences}
-        - Cooking Ability: {cooking_ability}
-        - Budget: {budget}
-        - Cultural Factors: {cultural_factors}
-        
-        Please provide a comprehensive nutrition plan that includes:
-        1. Daily caloric needs and macronutrient distribution
-        2. Specific food recommendations and portion sizes
-        3. Meal timing and frequency
-        4. Foods to include and avoid based on health conditions
-        5. Practical meal planning tips
-        6. Supplement recommendations if needed
-        7. Hydration guidelines
-        8. Progress monitoring suggestions""")
-    ])
+    prompt = f"""Based on the following user information, create a personalized nutrition plan:
+    {user_info}
     
-    chain = LLMChain(llm=llm, prompt=prompt)
+    Please provide:
+    1. Daily calorie target
+    2. Macronutrient breakdown
+    3. Meal timing suggestions
+    4. Food recommendations
+    5. Hydration guidelines
+    6. Any specific dietary considerations
+    """
     
-    with st.spinner('Creating your personalized nutrition plan...'):
-        result = chain.run(**user_info)
-        
-        return result
+    response = chat.send_message(prompt)
+    return response.text
 
 def app():
     """Main Streamlit application."""
