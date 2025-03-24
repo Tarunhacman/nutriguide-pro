@@ -2,6 +2,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 # Set page config first, before any other Streamlit commands
 st.set_page_config(
@@ -24,10 +25,29 @@ else:
     st.stop()
 
 try:
-    # Configure the Gemini model
+    # Configure the Gemini model with safety settings
     genai.configure(api_key=GOOGLE_API_KEY)
-    # Use the correct model identifier for text generation
-    model = genai.GenerativeModel('gemini-pro')
+    
+    # Set up the model with appropriate configuration
+    generation_config = {
+        "temperature": 0.7,
+        "top_p": 1,
+        "top_k": 1,
+        "max_output_tokens": 2048,
+    }
+    
+    safety_settings = {
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    }
+    
+    model = genai.GenerativeModel(
+        model_name="gemini-pro",
+        generation_config=generation_config,
+        safety_settings=safety_settings
+    )
 except Exception as e:
     st.error(f"Error configuring Gemini model: {str(e)}")
     st.stop()
@@ -159,8 +179,6 @@ def get_llm():
 def create_nutrition_plan(user_info):
     """Create a personalized nutrition plan based on user information."""
     try:
-        chat = get_llm()
-        
         prompt = f"""Based on the following user information, create a personalized nutrition plan:
         {user_info}
         
@@ -174,7 +192,7 @@ def create_nutrition_plan(user_info):
         """
         
         with st.spinner('Creating your personalized nutrition plan...'):
-            response = chat.send_message(prompt)
+            response = model.generate_content(prompt)
             return response.text
     except Exception as e:
         st.error(f"Error generating nutrition plan: {str(e)}")
