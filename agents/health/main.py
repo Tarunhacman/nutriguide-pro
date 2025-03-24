@@ -2,9 +2,6 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as genai
-from langchain.callbacks import StreamlitCallbackHandler
-from langchain.prompts import ChatPromptTemplate
-from langchain.chains import LLMChain
 
 # Set page config first, before any other Streamlit commands
 st.set_page_config(
