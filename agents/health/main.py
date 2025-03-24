@@ -43,9 +43,9 @@ try:
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
     }
     
-    # Use the latest model name and configuration
+    # Use the recommended model
     model = genai.GenerativeModel(
-        model_name="gemini-pro-vision",  # Updated to use the latest model
+        model_name="gemini-1.5-flash",  # Updated to use the recommended model
         generation_config=generation_config,
         safety_settings=safety_settings
     )
