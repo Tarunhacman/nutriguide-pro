@@ -26,7 +26,8 @@ else:
 try:
     # Configure the Gemini model
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-1.0-pro')
+    # Use the correct model identifier for text generation
+    model = genai.GenerativeModel('gemini-pro')
 except Exception as e:
     st.error(f"Error configuring Gemini model: {str(e)}")
     st.stop()
