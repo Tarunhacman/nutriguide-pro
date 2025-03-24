@@ -222,7 +222,7 @@ def app():
         st.markdown("---")
         st.markdown("""
         <div class='copyright'>
-            <p>© 2025 NutriGuide Pro</p>
+            <p>© 2025 Tarun Kumar</p>
             <p>All rights reserved</p>
         </div>
         """, unsafe_allow_html=True)
