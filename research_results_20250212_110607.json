@@ -1,7 +1,0 @@
-{
-    "query": "Market for ai powered auto commenter",
-    "timestamp": "20250212_110607",
-    "results": {
-        "OpenAI": "Error with openai, apikey: AIzaSyALSBRZylzpJDfuyoL5FapH2qHZgWS0ikM: LLM.__init__() missing 1 required positional argument: 'model'"
-    }
-}

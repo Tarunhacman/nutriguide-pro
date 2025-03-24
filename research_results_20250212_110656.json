@@ -1,7 +1,0 @@
-{
-    "query": "Market for ai powered auto commenter",
-    "timestamp": "20250212_110656",
-    "results": {
-        "OpenAI": "Error with openai, apikey: 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: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************o28A. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"
-    }
-}

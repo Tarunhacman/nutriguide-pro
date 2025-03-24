@@ -1,7 +1,0 @@
-{
-    "query": "AI NEWS TODAY",
-    "timestamp": "20250212_110507",
-    "results": {
-        "OpenAI": "Error with openai, apikey: AIzaSyALSBRZylzpJDfuyoL5FapH2qHZgWS0ikM: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************o28A. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"
-    }
-}
