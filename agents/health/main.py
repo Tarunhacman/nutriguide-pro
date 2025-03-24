@@ -13,11 +13,23 @@ st.set_page_config(
 
 # Load environment variables
 load_dotenv()
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# Configure the Gemini model
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+# Get API key from environment variable or Streamlit secrets
+if os.getenv("GOOGLE_API_KEY"):
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+elif hasattr(st.secrets, "GOOGLE_API_KEY"):
+    GOOGLE_API_KEY = st.secrets.GOOGLE_API_KEY
+else:
+    st.error("Google API key not found. Please set the GOOGLE_API_KEY in your environment variables or Streamlit secrets.")
+    st.stop()
+
+try:
+    # Configure the Gemini model
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-pro')
+except Exception as e:
+    st.error(f"Error configuring Gemini model: {str(e)}")
+    st.stop()
 
 # Custom CSS for modern UI
 st.markdown("""
@@ -145,22 +157,27 @@ def get_llm():
 
 def create_nutrition_plan(user_info):
     """Create a personalized nutrition plan based on user information."""
-    chat = get_llm()
-    
-    prompt = f"""Based on the following user information, create a personalized nutrition plan:
-    {user_info}
-    
-    Please provide:
-    1. Daily calorie target
-    2. Macronutrient breakdown
-    3. Meal timing suggestions
-    4. Food recommendations
-    5. Hydration guidelines
-    6. Any specific dietary considerations
-    """
-    
-    response = chat.send_message(prompt)
-    return response.text
+    try:
+        chat = get_llm()
+        
+        prompt = f"""Based on the following user information, create a personalized nutrition plan:
+        {user_info}
+        
+        Please provide:
+        1. Daily calorie target
+        2. Macronutrient breakdown
+        3. Meal timing suggestions
+        4. Food recommendations
+        5. Hydration guidelines
+        6. Any specific dietary considerations
+        """
+        
+        with st.spinner('Creating your personalized nutrition plan...'):
+            response = chat.send_message(prompt)
+            return response.text
+    except Exception as e:
+        st.error(f"Error generating nutrition plan: {str(e)}")
+        return None
 
 def app():
     """Main Streamlit application."""
