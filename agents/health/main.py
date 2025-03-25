@@ -9,7 +9,12 @@ st.set_page_config(
     page_title="NutriGuide Pro",
     page_icon="🥗",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': None,
+        'Report a bug': None,
+        'About': None
+    }
 )
 
 # Load environment variables
@@ -56,6 +61,11 @@ except Exception as e:
 # Custom CSS for modern UI
 st.markdown("""
     <style>
+    /* Hide Streamlit GitHub Icon and Link */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
     /* Modern Color Scheme */
     :root {
         --primary-color: #2E7D32;
